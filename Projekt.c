@@ -10,18 +10,27 @@ void board(int a, int b, int **tab){ //funkcja rysuj¹ca planszê (wraz z ¿ywymi k
 			if (tab[i][j] == 0){
 				printf(" ");
 			} else {
-				printf("O");
+				printf("%i");
 			}
 		}
 		printf("\n");
 	}
+}
+
+int random(int m){
+	int seed, r;
+	time_t tt;
+	seed = time(&tt);
+	srand(seed);
+	r = rand()%m;
+	return r;
 }
 	
 	
 
 int main(){
 	//zmienne, które bêd¹ potem wczytywane z pliku
-	int a = 15, b = 15;
+	int a = 9, b = 6, hm = 32;
 	int c, i, j;
 	int **place;
 	
@@ -33,8 +42,11 @@ int main(){
 	for (i=0; i<a; i++){
 		for(j=0; j<b; j++){ 
 			place[i][j] = 0;
+			printf("%i", place[i][j]);
 		}
+		printf("\n");
 	}
+	
 	place[9][13] = 1;
 	place[2][5] = 1;
 	
