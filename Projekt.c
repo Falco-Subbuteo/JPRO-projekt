@@ -10,7 +10,7 @@ void board(int a, int b, int **tab){ //funkcja rysuj¹ca planszê (wraz z ¿ywymi k
 //			if (tab[i][j] == 0){
 //				printf("%i");
 //			} else {
-				printf("%i", tab[i][j]);
+				printf("%i ", tab[i][j]);
 		//	}
 		}
 		printf("\n");
@@ -20,8 +20,8 @@ void board(int a, int b, int **tab){ //funkcja rysuj¹ca planszê (wraz z ¿ywymi k
 int random(int m){
 	int seed, r;
 	time_t tt;
-	seed = time(&tt);
-	srand(seed);
+//	seed = time(&tt);
+//	srand(seed);
 	r = rand()%m;
 	return r;
 }
@@ -30,8 +30,7 @@ int random(int m){
 
 int main(){
 	//zmienne, które bêd¹ potem wczytywane z pliku
-	int a = 15, b = 15, hm = 32;
-	int c, i, j;
+	int a = 20, b = 20, hm = 32, x, y, c, i, j, count=0;
 	int **place;
 	
 	place = calloc(a, sizeof(int*));
@@ -52,12 +51,22 @@ int main(){
 	//	printf("\n");
 	}
 	
-	place[9][13] = 1;
-	place[2][5] = 1;
+	for (i=0; i<hm;){
+		x = random(a);
+		y = random(b);
+		if (place[x][y] == 0){
+			place[x][y] = 1;
+			i++;
+		}
+	}
+		
+	
+//	place[9][13] = 1;
+//	place[2][5] = 1;
 	
 	board(a, b, place);
 	
-//	printf("Projekt.\n");
+
 	
 	
 	
