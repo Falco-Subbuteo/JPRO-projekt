@@ -7,15 +7,60 @@ void board(int a, int b, int **tab){ //funkcja rysuj¹ca planszê (wraz z ¿ywymi k
 	int i, j;
 	for (i=0; i<a; i++){
 		for (j=0; j<b; j++){
-//			if (tab[i][j] == 0){
-//				printf("%i");
-//			} else {
-				printf("%i ", tab[i][j]);
-		//	}
+			if (tab[i][j] == 0){
+				printf("  ");
+			} else {
+				printf("o ", tab[i][j]);
+			}
 		}
 		printf("\n");
 	}
 }
+
+int state(int **tab, int a, int b){
+	int i, j, x, y count=0, res;
+//	for (i=y-1; i<=y+1 && i<b; i++){
+//		for (j=x-1; j<=x+1 && j<a; j++){
+	for (i=0; i<a; i++){
+		for (j=0; j<b; j++){
+			if (tab[i][j]==1){
+				count--;
+				for (y=i-1; y<=i+1; y++){
+					for (x=j-1; x<=j+1; x++){
+						if (tab[y][x]==1){
+							count++;
+						}
+					}
+				}
+				if (count==2 || count == 3){
+					res = 1;
+				} else {
+					res = 0;
+				}
+			} else if (tab[i][j]==0){
+				for (y=i-1; y<=i+1; y++){
+					for (x=j-1; x<=j+1; x++){
+						if (tab[y][x]==1){
+							count++;
+						}
+					}
+				}
+				if (count == 3){
+					res = 1;
+				} else if (count == 0){
+					res = 0;
+				}
+			}
+		}
+	}
+	return res;
+}
+				
+			
+			
+			
+			
+			
 
 int random(int m){
 	int seed, r;
@@ -54,20 +99,13 @@ int main(){
 	for (i=0; i<hm;){
 		x = random(a);
 		y = random(b);
-		if (place[x][y] == 0){
-			place[x][y] = 1;
+		if (place[y][x] == 0){
+			place[y][x] = 1;
 			i++;
 		}
 	}
-		
-	
-//	place[9][13] = 1;
-//	place[2][5] = 1;
 	
 	board(a, b, place);
-	
-
-	
 	
 	
 	return 0;
