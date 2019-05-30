@@ -4,14 +4,14 @@
 #include <unistd.h>
 
 void board(int a, int b, int **tab){ //funkcja rysuj¹ca planszê (wraz z ¿ywymi komórkami).
-	system("cls");
+//	system("cls");
 	int i, j;
-	for (i=0; i<a; i++){
-		for (j=0; j<b; j++){
+	for (i=1; i<=a; i++){
+		for (j=1; j<=b; j++){
 			if (tab[i][j] == 0){
 				printf("  ");
 			} else {
-				printf("o ", tab[i][j]);
+				printf("x ", tab[i][j]);
 			}
 		}
 		printf("\n");
@@ -23,25 +23,24 @@ int state(int **tab, int a, int b){
 	int **prev;
 	
 	prev = calloc(a, sizeof(int*));
-	for (c=0; c<a; c++){
-		prev[c] = calloc(b, sizeof(int));
+	for (c=0; c<a+2; c++){
+		prev[c] = calloc(b+2, sizeof(int));
 	}
 	/*Przepisanie aktualnego stanu planszy, do drugiej tablicy tablic,
 	ktora bedzie oznaczac stan poprzedniego kroku.*/
-	for (i=0; i<a; i++){
-		for (j=0; j<b; j++){
+	for (i=0; i<a+2; i++){
+		for (j=0; j<b+2; j++){
 			prev[i][j] = tab[i][j];
 		}
 	}
 	
-//	for (i=y-1; i<=y+1 && i<b; i++){
-//		for (j=x-1; j<=x+1 && j<a; j++){
-	for (i=0; i<a; i++){
-		for (j=0; j<b; j++){
+	for (i=1; i<=a; i++){
+		for (j=1; j<=b; j++){
 			if (tab[i][j]==1){
 				count--;
-				for (y=i-1 && y>=0; y<=i+1 && y<a; y++){
-					for (x=j-1 && y>=0; x<=j+1 && x<b; x++){
+				for (y=i-1; y<=i+1; y++){
+					for (x=j-1; x<=j+1; x++){
+						printf("%i %i", i, j);
 						if (tab[y][x]==1){
 							count++;
 						}
@@ -62,13 +61,15 @@ int state(int **tab, int a, int b){
 				}
 				if (count == 3){
 					res = 1;
-				} else if (count == 0){
+				} else {
 					res = 0;
 				}
 			}
 			tab[i][j] = res;
 		}
 	}
+	/*Porownanie kroku poprzedniego z krokiem nastepnym,
+	jesli sa identyczne, to parametr diff2 nie ulegnie zmianie.*/
 	for (i=0; i<a; i++){
 		for (j=0; j<b; j++){
 			if (tab[i][j] != prev[i][j]){
@@ -76,25 +77,21 @@ int state(int **tab, int a, int b){
 			}
 		}
 	}
+	//Jesli diff1 i diff2 sa rowne 0, oznacza to, ze krok poprzedni i krok nastepny sa takie same.
 	if (diff1 == diff2){
 		stop = 1;
 	}
 	
 	return stop;
 }
-				
-			
-			
-			
-			
-			
 
+			
 int random(int m){
 	int seed, r;
 	time_t tt;
-//	seed = time(&tt);
+//	seed = time(NULL);
 //	srand(seed);
-	r = rand()%m;
+	r = (rand()%m)+1;
 	return r;
 }
 	
@@ -102,16 +99,16 @@ int random(int m){
 
 int main(){
 	//zmienne, które bêd¹ potem wczytywane z pliku
-	int a = 20, b = 20, hm = 32, x, y, c, i, j, count=0, halt=0;
+	int a = 20, b = 20, hm = 2, x, y, c, i, j, count=0, halt=0;
 	int **place;
 	
-	place = calloc(a, sizeof(int*));
-	for (c=0; c<a; c++){
-		place[c] = calloc(b, sizeof(int));
+	place = calloc(a+2, sizeof(int*));
+	for (c=0; c<a+2; c++){
+		place[c] = calloc(b+2, sizeof(int));
 	}
 	
-	for (i=0; i<a; i++){
-		for(j=0; j<b; j++){ 
+	for (i=0; i<a+2; i++){
+		for(j=0; j<b+2; j++){ 
 			place[i][j] = (int) 0;
 		}
 	}
@@ -131,7 +128,8 @@ int main(){
 		board(a, b, place);
 		halt = state(place, a, b);
 		count++;
-		sleep(1);
+	//	sleep(1);
+		system("pause");
 	} while (halt != 1);
 	
 	printf("Game ended in %i steps.\n", count);	
