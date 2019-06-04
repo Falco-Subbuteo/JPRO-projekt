@@ -4,25 +4,26 @@
 #include <unistd.h>
 
 void board(int a, int b, int **tab){ //funkcja rysuj¹ca planszê (wraz z ¿ywymi komórkami).
-//	system("cls");
+	system("cls");
 	int i, j;
 	for (i=1; i<=a; i++){
 		for (j=1; j<=b; j++){
-			if (tab[i][j] == 0){
-				printf("  ");
-			} else {
-				printf("x ", tab[i][j]);
+		//	if (tab[i][j] == 0){
+		//		printf("  ");
+		//	} else {
+				printf("%i ", tab[i][j]);
 			}
+			printf("\n");
 		}
 		printf("\n");
 	}
-}
+//}
 
 int state(int **tab, int a, int b){
 	int c, i, j, x, y, count=0, res, stop=0, diff1=0, diff2=0;
 	int **prev;
 	
-	prev = calloc(a, sizeof(int*));
+	prev = calloc(a+2, sizeof(int*));
 	for (c=0; c<a+2; c++){
 		prev[c] = calloc(b+2, sizeof(int));
 	}
@@ -36,11 +37,12 @@ int state(int **tab, int a, int b){
 	
 	for (i=1; i<=a; i++){
 		for (j=1; j<=b; j++){
+			count = 0;
 			if (tab[i][j]==1){
 				count--;
 				for (y=i-1; y<=i+1; y++){
 					for (x=j-1; x<=j+1; x++){
-						printf("%i %i", i, j);
+					//	printf("%i %i", i, j);
 						if (tab[y][x]==1){
 							count++;
 						}
@@ -51,9 +53,10 @@ int state(int **tab, int a, int b){
 				} else {
 					res = 0;
 				}
+			count = 0;
 			} else if (tab[i][j]==0){
-				for (y=i-1 && y>=0; y<=i+1 && y<a; y++){
-					for (x=j-1 && x>=0; x<=j+1 && x<b; x++){
+				for (y=i-1; y<=i+1; y++){
+					for (x=j-1; x<=j+1; x++){
 						if (tab[y][x]==1){
 							count++;
 						}
@@ -70,8 +73,8 @@ int state(int **tab, int a, int b){
 	}
 	/*Porownanie kroku poprzedniego z krokiem nastepnym,
 	jesli sa identyczne, to parametr diff2 nie ulegnie zmianie.*/
-	for (i=0; i<a; i++){
-		for (j=0; j<b; j++){
+	for (i=1; i<=a; i++){
+		for (j=1; j<=b; j++){
 			if (tab[i][j] != prev[i][j]){
 				diff2++;
 			}
@@ -98,8 +101,8 @@ int random(int m){
 	
 
 int main(){
-	//zmienne, które bêd¹ potem wczytywane z pliku
-	int a = 20, b = 20, hm = 2, x, y, c, i, j, count=0, halt=0;
+	//zmienne, których czêœæ ma byæ potem wczytywana z pliku
+	int a = 20, b = 20, hm = 32, x, y, c, i, j, count=0, halt=0;
 	int **place;
 	
 	place = calloc(a+2, sizeof(int*));
@@ -120,16 +123,18 @@ int main(){
 			place[y][x] = 1;
 			i++;
 		}
-	}
+	}	
 	
-	board(a, b, place);
+//	board(a, b, place);
+
 	
 	do{
 		board(a, b, place);
 		halt = state(place, a, b);
+	//	printf("%i", count);
 		count++;
-	//	sleep(1);
-		system("pause");
+		sleep(1);
+	//	system("pause");
 	} while (halt != 1);
 	
 	printf("Game ended in %i steps.\n", count);	
