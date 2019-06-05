@@ -97,7 +97,7 @@ int random(int m){
 
 int main(){
 	//zmienne, których czêœæ ma byæ potem wczytywana z pliku
-	int a = 20, b = 20, hm = 100, x, y, c, i, j, count=0, halt=0, alive=0, dead=0;
+	int a = 20, b = 20, hm = 100, x, y, c, i, j, count=0, halt=0, alive=0, dead=0, end=0;
 	int **place;
 	
 	place = calloc(a+2, sizeof(int*));
@@ -132,20 +132,7 @@ int main(){
 	return 1; //wyjscie z programu cokolwiek innego w return niz zero, zeby bylo wiadomo w ktorym momencie wyszlo z programu
 	}
 	
-//	board(a, b, place);
-//	sleep(1);
-//	for (i=1; i<=a; i++){
-//		for(j=1; j<=b; j++){
-//			if (place[i][j] == 1){
-//				alive++;
-//			} else {
-//				dead++;
-//			}
-//		}
-//	}
-//	fprintf(output, "%i %i %i\n", count, dead, alive);
 
-	
 	do{
 	//	board(a, b, place);
 		dead = 0;
@@ -164,7 +151,9 @@ int main(){
 		halt = state(place, a, b);
 		board(a, b, place);
 		count++;
-		
+		if (end != 0 && count == end){
+			break;
+		}
 	//	sleep(1);
 		system("pause");
 	} while (halt != 1);
