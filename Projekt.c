@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 #include <unistd.h>
+#include <time.h>
 
 	//WERSJA ALFA
 
@@ -13,11 +13,54 @@ void board(int a, int b, int **tab){ //funkcja rysuj¹ca planszê (wraz z ¿ywymi k
 			if (tab[i][j] == 0){
 				printf("  ");
 			} else {
-				printf("x ", tab[i][j]);
+				printf("o ", tab[i][j]);
 			}
 		}
 		printf("\n");
 	}
+}
+
+void VarFromFile(int *p1, int *p2, int *p3, int *p4, int *p5){
+	
+	FILE *variables = fopen("config.txt", "r");
+	if(variables == NULL){
+		perror("File opening error!\n");
+		return;
+	}
+	char ch[300], var[5][7];
+	int i, j, k=0;	
+	for(i=0;i<5;i++){
+		for(j=0;j<7;j++){
+			var[i][j]='k';
+		}
+	}	
+	i=0;
+	j=0;	
+	while (feof(variables) == 0){
+		ch[i] = fgetc(variables);
+		if(isdigit(ch[i])!=0){
+			printf("%c", ch[i]);
+			var[j][k] = ch[i];
+			k++;
+		}
+		if(isblank(ch[i])!=0 || iscntrl(ch[i])!=0){
+			j++;
+			k=0;
+		}
+	//	printf("%c", ch[i]);
+		i++;
+	}
+	
+	for (i=0; i<5; i++){
+		for (j=0; i<7; j++){
+			printf("%c", var[i][j]);
+		}
+		printf("\n");
+	}
+	
+	fclose(variables);
+
+	
 }
 
 
@@ -106,9 +149,10 @@ int cont(int m){ //Contigent, bo random siê gryzie z niektórymi kompilatorami.
 
 int main(){
 	//zmienne, których czêœæ ma byæ potem wczytywana z pliku
-	int a = 25, b = 25, hm = 200, x, y, c, i, j, count=0, halt=0, alive=0, dead=0, end=0, exit=10, step=0;
+	int a = 25, b = 25, hm = 200, x, y, c, i, j, count=0, halt=0, alive=0, dead=0, end=0, exit=0, step=0;
+//	int *p1 = &a, *p2 = &b, *p3 = &hm, *p4 = &end, *p5 = &exit;
 	int **place;
-	char com = 'g';
+	char comm = 'g';
 	
 	place = calloc(a+2, sizeof(int*));
 	for (c=0; c<a+2; c++){
@@ -133,7 +177,7 @@ int main(){
 
 	FILE *data = NULL;
 	FILE *output = NULL;
-	data = fopen("config.dat", "r");
+	data = fopen("config.txt", "r");
 	output = fopen("data.dat", "w+");
 	
 
@@ -141,7 +185,12 @@ int main(){
 	perror("File opening error!\n");
 	return 1;
 	}	
+	
+	VarFromFile(&a, &b, &hm, &end, &exit);
 
+
+
+/*
 	board(a,b,place);
 	sleep(1);
 	do{
@@ -164,9 +213,9 @@ int main(){
 		if (step == exit && exit != 0){
 			step = 0;
 			printf("Do you want to stop the game?\n\
-Type \"e\" and press \"Enter\" to stop, press \"Enter\" to continue.\n");
-			com = getchar();
-			if (com == 'e'){
+Type \"e\" and press \"Enter\" to stop or press \"Enter\" to continue.\n");
+			comm = getchar();
+			if (comm == 'e'){
 				break;
 			}
 		}
@@ -178,8 +227,11 @@ Type \"e\" and press \"Enter\" to stop, press \"Enter\" to continue.\n");
 	
 	printf("Game ended in %i steps.\n", count);	
 	
+*/	
+	
 	fclose(data);
 	fclose(output);
+	
 	
 	return 0;
 }
