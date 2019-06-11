@@ -3,9 +3,7 @@
 #include <unistd.h>
 #include <time.h>
 
-	//WERSJA ALFA
-
-void board(int a, int b, int **tab){ //funkcja rysuj¹ca planszê (wraz z ¿ywymi komórkami).
+void board(int a, int b, int **tab){ //Function which draws current state of the game.
 	system("cls");
 	int i, j;
 	for (i=1; i<=a; i++){
@@ -20,7 +18,7 @@ void board(int a, int b, int **tab){ //funkcja rysuj¹ca planszê (wraz z ¿ywymi k
 	}
 }
 
-void VarFromFile(int *p1, int *p2, int *p3, int *p4, int *p5){
+void VarFromFile(int *p1, int *p2, int *p3, int *p4, int *p5){ //Function responsible for reading variables from config.txt file.
 	
 	FILE *variables = fopen("config.txt", "r");
 	if(variables == NULL){
@@ -54,7 +52,7 @@ void VarFromFile(int *p1, int *p2, int *p3, int *p4, int *p5){
 
 
 
-int state(int **tab, int a, int b){ //Funkcja odpowiadaj¹ca za ewolucjê ca³ego uk³adu.
+int state(int **tab, int a, int b){ //Function responsible for whole system's evolution.
 	int c, i, j, x, y, count=0, stop=0, diff1=0, diff2=0;
 	int **prev, **res;
 	
@@ -62,15 +60,15 @@ int state(int **tab, int a, int b){ //Funkcja odpowiadaj¹ca za ewolucjê ca³ego u
 	for (c=0; c<a+2; c++){
 		prev[c] = calloc(b+2, sizeof(int*));
 	}
-	/*Przepisanie aktualnego stanu planszy, do drugiej tablicy tablic,
-	ktora bedzie oznaczac stan poprzedniego kroku.*/
+	/*Copying actual game's state to other two-dimensional array,
+	which will represent previous step's status.*/
 	for (i=0; i<a+2; i++){
 		for (j=0; j<b+2; j++){
 			prev[i][j] = tab[i][j];
 		}
 	}
 	
-	//Pomocnicza tablica z wynikami
+	//Additional array with results.
 	res = calloc(a+2, sizeof(int*));
 	for (c=0; c<a+2; c++){
 		res[c] = calloc(b+2, sizeof(int*));
@@ -105,8 +103,8 @@ int state(int **tab, int a, int b){ //Funkcja odpowiadaj¹ca za ewolucjê ca³ego u
 		}
 	}
 	
-	/*Porownanie kroku poprzedniego z krokiem nastepnym,
-	jesli sa identyczne, to parametr diff2 nie ulegnie zmianie.*/
+	/*Comparing previous step with current one.
+	If they're identical, then diff2 won't change*/
 	for (i=1; i<=a; i++){
 		for (j=1; j<=b; j++){
 			if (tab[i][j] != prev[i][j]){
@@ -115,7 +113,7 @@ int state(int **tab, int a, int b){ //Funkcja odpowiadaj¹ca za ewolucjê ca³ego u
 		}
 	}
 	
-	//Jesli diff1 i diff2 sa rowne 0, oznacza to, ze krok poprzedni i krok nastepny sa takie same.
+	//If diff1 and diff2 are the same, that means, that current and previous step are the same.
 	if (diff1 == diff2){
 		stop = 1;
 	} else {
@@ -128,7 +126,7 @@ int state(int **tab, int a, int b){ //Funkcja odpowiadaj¹ca za ewolucjê ca³ego u
 
 
 			
-int cont(int m){ //Contigent, bo random siê gryzie z niektórymi kompilatorami.
+int cont(int m){ //cont (contigent), because "random" makes problems with some compilators.
 	int r;
 	r = (rand()%m)+1;
 	return r;
@@ -137,11 +135,12 @@ int cont(int m){ //Contigent, bo random siê gryzie z niektórymi kompilatorami.
 	
 
 int main(){
-	//zmienne, których czêœæ ma byæ potem wczytywana z pliku
 	int a = 25, b = 25, hm = 200, x, y, c, i, j, count=0, halt=0, alive=0, dead=0, end=0, exit=0, step=0;
-//	int *p1 = &a, *p2 = &b, *p3 = &hm, *p4 = &end, *p5 = &exit;
 	int **place;
 	char comm = 'g';
+	srand(time(0));
+	
+	VarFromFile(&a, &b, &hm, &end, &exit);
 	
 	place = calloc(a+2, sizeof(int*));
 	for (c=0; c<a+2; c++){
@@ -174,13 +173,9 @@ int main(){
 	perror("File opening error!\n");
 	return 1;
 	}	
-	
-	VarFromFile(&a, &b, &hm, &end, &exit);
 
-
-
-/*
 	board(a,b,place);
+	system("pause");
 	sleep(1);
 	do{
 		dead = 0;
@@ -194,7 +189,7 @@ int main(){
 				}
 			}
 		}
-		fprintf(output, "%i %i %i\n", count, dead, alive); //Zapisywanie do pliku w kolumnach.
+		fprintf(output, "%i %i %i\n", count, dead, alive); //Saving to files in 3 columns, separated by space.
 		halt = state(place, a, b);
 		board(a, b, place);
 		count++;
@@ -215,12 +210,9 @@ Type \"e\" and press \"Enter\" to stop or press \"Enter\" to continue.\n");
 	} while (halt != 1);
 	
 	printf("Game ended in %i steps.\n", count);	
-	
-*/	
-	
+		
 	fclose(data);
 	fclose(output);
-	
 	
 	return 0;
 }
