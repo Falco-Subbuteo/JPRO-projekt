@@ -3,8 +3,9 @@
 #include <unistd.h>
 #include <time.h>
 
-void board(int a, int b, int **tab){ //Function which draws current state of the game.
+void board(int a, int b, int **tab){ //Function which draws current state of the game and counts number living and dead cells.
 	system("cls");
+	printf("	GAME OF LIFE\n\n");
 	int i, j;
 	for (i=1; i<=a; i++){
 		for (j=1; j<=b; j++){
@@ -122,23 +123,29 @@ int state(int **tab, int a, int b){ //Function responsible for whole system's ev
 	
 	return stop;
 }
-
-
-
 			
 int cont(int m){ //cont (contigent), because "random" makes problems with some compilators.
 	int r;
 	r = (rand()%m)+1;
 	return r;
-}
-	
-	
+}	
 
 int main(){
-	int a = 25, b = 25, hm = 200, x, y, c, i, j, count=0, halt=0, alive=0, dead=0, end=0, exit=0, step=0;
+	int a = 25, b = 25, hm = 300, x, y, c, i, j, count=0, halt=0, alive=0, dead=0, end=0, exit=0, step=0;
 	int **place;
 	char comm = 'g';
 	srand(time(0));
+	
+	FILE *data = NULL;
+	FILE *output = NULL;
+	data = fopen("config.txt", "r");
+	output = fopen("data.dat", "w+");
+	
+
+	if(data == NULL || output == NULL) {
+	perror("File opening error!\n");
+	return 1;
+	}	
 	
 	VarFromFile(&a, &b, &hm, &end, &exit);
 	
@@ -154,30 +161,22 @@ int main(){
 	}
 
 	for (i=0; i<hm;){
-		x = cont(a);
-		y = cont(b);
+		x = cont(b);
+		y = cont(a);
 		if (place[y][x] == 0){
 			place[y][x] = 1;
 			i++;
 		}
 	}	
 		
-
-	FILE *data = NULL;
-	FILE *output = NULL;
-	data = fopen("config.txt", "r");
-	output = fopen("data.dat", "w+");
-	
-
-	if(data == NULL || output == NULL) {
-	perror("File opening error!\n");
-	return 1;
-	}	
-
-	board(a,b,place);
-	system("pause");
+	board(a, b, place);
+	printf("Step: %i	Dead: %i	Alive: %i\n", count, a*b-hm, hm);
 	sleep(1);
+	count++;
 	do{
+		fprintf(output, "%i %i %i\n", count, dead, alive); //Saving to files in 3 columns, separated by space.
+		halt = state(place, a, b);
+		board(a, b, place);
 		dead = 0;
 		alive = 0;		
 		for (i=1; i<=a; i++){
@@ -189,9 +188,7 @@ int main(){
 				}
 			}
 		}
-		fprintf(output, "%i %i %i\n", count, dead, alive); //Saving to files in 3 columns, separated by space.
-		halt = state(place, a, b);
-		board(a, b, place);
+		printf("Step: %i	Dead: %i	Alive: %i\n", count, dead, alive);
 		count++;
 		step++;
 		if (step == exit && exit != 0){
@@ -209,11 +206,10 @@ Type \"e\" and press \"Enter\" to stop or press \"Enter\" to continue.\n");
 		sleep(1);
 	} while (halt != 1);
 	
-	printf("Game ended in %i steps.\n", count);	
+	printf("Game ended in %i steps.\n", count-1);	
 		
 	fclose(data);
 	fclose(output);
 	
 	return 0;
-}
-	
+}	
