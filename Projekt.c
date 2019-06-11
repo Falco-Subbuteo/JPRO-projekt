@@ -27,40 +27,29 @@ void VarFromFile(int *p1, int *p2, int *p3, int *p4, int *p5){
 		perror("File opening error!\n");
 		return;
 	}
-	char ch[300], var[5][7];
-	int i, j, k=0;	
-	for(i=0;i<5;i++){
-		for(j=0;j<7;j++){
-			var[i][j]='k';
-		}
-	}	
-	i=0;
-	j=0;	
-	while (feof(variables) == 0){
+	char ch[300]={'\0'}, vars[5][7] = {'\0'};
+	int i=0, n=0, o=0;
+	
+	while (feof(variables)==0){
 		ch[i] = fgetc(variables);
-		if(isdigit(ch[i])!=0){
-			printf("%c", ch[i]);
-			var[j][k] = ch[i];
-			k++;
+		
+		if (isdigit(ch[i])){
+			vars[n][o] = ch[i];
+			o++;
+		} else if (iscntrl(ch[i])!=0){
+			n++;
+			o=0;
 		}
-		if(isblank(ch[i])!=0 || iscntrl(ch[i])!=0){
-			j++;
-			k=0;
-		}
-	//	printf("%c", ch[i]);
 		i++;
 	}
 	
-	for (i=0; i<5; i++){
-		for (j=0; i<7; j++){
-			printf("%c", var[i][j]);
-		}
-		printf("\n");
-	}
-	
-	fclose(variables);
+	*p1 = atoi(vars[0]);
+	*p2 = atoi(vars[1]);
+	*p3 = atoi(vars[2]);
+	*p4 = atoi(vars[3]);
+	*p5 = atoi(vars[4]);
 
-	
+	fclose(variables);	
 }
 
 
